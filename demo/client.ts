@@ -217,6 +217,7 @@ if (document.location.pathname === '/test') {
   document.getElementById('serialize').addEventListener('click', serializeButtonHandler);
   document.getElementById('htmlserialize').addEventListener('click', htmlSerializeButtonHandler);
   document.getElementById('custom-glyph').addEventListener('click', writeCustomGlyphHandler);
+  document.getElementById('reset-write').addEventListener('click', resetWrite);
   document.getElementById('load-test').addEventListener('click', loadTest);
   document.getElementById('print-cjk').addEventListener('click', addCjk);
   document.getElementById('print-cjk-sgr').addEventListener('click', addCjkRandomSgr);
@@ -738,6 +739,28 @@ function writeCustomGlyphHandler(): void {
   term.write('  ╚══╩══╝  └──┴──┘  ╰──┴──╯  ╰──┴──╯  ┗━━┻━━┛           └╌╌┘ ╎ ┗╍╍┛ ┋  ▁▂▃▄▅▆▇█\n\r');
   term.write('\x1b[0m');
   window.scrollTo(0, 0);
+}
+
+function resetWrite(): void {
+  const s = 'begin\r\n' + 'line\r\n'.repeat(200) + 'end\r\n';
+  const b = new Uint8Array([...s].map(c => c.charCodeAt(0)));
+
+  term.reset();
+
+  term.write(s); // Supposed to automatically scroll to the bottom but fails randomly
+
+  /* Attempted workarounds:
+  term.write(b); // Makes no difference
+
+  term.write(s);
+  term.scrollToBottom(); // Doesn't help
+
+  term.write(s, () => term.scrollToBottom()); // Doesn't help
+
+  term.write(s, () => setTimeout(() => term.scrollToBottom())); // Doesn't help
+
+  term.write(s, () => setTimeout(() => term.scrollToBottom(), 100)); // Kind of works but...
+  */
 }
 
 function loadTest(): void {
